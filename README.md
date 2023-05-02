@@ -7,5 +7,5 @@
 
 
 
-RDLC sum
+#RDLC sum
 =iif((Sum(Fields!total_amount.Value, "ds") + Sum(Fields!charge.Value, "ds4")) -Sum(Fields!paid_amount.Value, "ds3"),0,(Sum(Fields!total_amount.Value, "ds") + Sum(Fields!charge.Value, "ds4")) -Sum(Fields!paid_amount.Value, "ds3"))
