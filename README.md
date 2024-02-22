@@ -12,7 +12,7 @@
 
 
 
-##Amount in Word 
+## Amount in Word 
 Public Shared Function changeToWords(ByVal numb As [String]) As [String]
     Dim val As [String] = "", wholeNo As [String] = numb, points As [String] = "", andStr As [String] = "", pointStr As [String] = ""
     Dim endStr As [String] = ""
