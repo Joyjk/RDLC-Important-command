@@ -220,3 +220,93 @@ Private Shared Function translateCents(ByVal cents As [String]) As [String]
     Next
     Return cts
 End Function
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+## RDLC report Print in Multiple Page
+ private byte[] CombineReports(List<byte[]> pdfReports)
+ {
+     using (var ms = new MemoryStream())
+     {
+         using (var document = new iTextSharp.text.Document())
+         {
+             using (var pdfCopy = new iTextSharp.text.pdf.PdfCopy(document, ms))
+             {
+                 document.Open();
+
+                 foreach (var pdfBytes in pdfReports)
+                 {
+                     using (var reader = new iTextSharp.text.pdf.PdfReader(pdfBytes))
+                     {
+                         for (int i = 1; i <= reader.NumberOfPages; i++)
+                         {
+                             pdfCopy.AddPage(pdfCopy.GetImportedPage(reader, i));
+                         }
+                     }
+                 }
+             }
+         }
+         return ms.ToArray();
+     }
+ }
+
+
+ [Route("GetAllAppointmentPrescription")]
+ [HttpGet]
+ public IActionResult GetAllAppointmentPrescription(string fromDate, string toDate, string doctor_id, string branch_id)
+ {
+     ///////////Appointment Prescription
+     string inpurformat = "PDF";
+     IActionResult response = Unauthorized();
+     try
+     {
+         List<byte[]> reportBytesList = new();
+         var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+         if (_tokenService.IsTokenValid(_config["Jwt:Key"], _config["Jwt:Issuer"], _bearer_token))
+         {
+             List<string> appointmentIdAll = _misAllService.GetAppointmentPatientListByDoctorID(doctor_id, fromDate, toDate);
+             if (appointmentIdAll.Count > 0)
+             {
+                 foreach (var appointment_id in appointmentIdAll)
+                 {
+                     Dictionary<string, DataTable> data = new();
+                     data.Add("ds", _pescriptionService.GetPescription(appointment_id));
+                     data.Add("ds1", _pescriptionService.GetPescriptionFigure(appointment_id));
+                     data.Add("ds2", _pescriptionService.GetPescriptionTreatment(appointment_id));
+                     data.Add("ds3", _pescriptionService.GetPescriptionAdvice(appointment_id));
+                     data.Add("ds4", _pescriptionService.GetPescriptionLeftSide(appointment_id));
+                     var path = $"{this._iWebHostEnvironment.WebRootPath}\\Reports\\rdlc\\doctor_pescription.rdlc";
+                     ReportDomain reportDomain = new(inpurformat, data, path, _commonService.GetCompanyInfo());
+                     var reportBytes = new ReportApplication().Load(reportDomain);
+                     reportBytesList.Add(reportBytes);
+                 }
+                 var combinedPdfBytes = CombineReports(reportBytesList);
+
+                 //response = Ok(File(new ReportApplication().Load(reportDomain), "application/pdf", System.Guid.NewGuid().ToString() + "." + inpurformat));
+                 response = Ok(File(combinedPdfBytes, "application/pdf", System.Guid.NewGuid().ToString() + "." + inpurformat));
+             }
+             else
+             {
+                 response = StatusCode(404, "No data found");
+             }
+         }
+         
+     }
+     catch (Exception ex)
+     {
+
+         response = StatusCode(503, ex);
+     }
+     return response;
+ }
+
+
+
+
+
+
+
+
+
+
+
