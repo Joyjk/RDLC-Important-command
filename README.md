@@ -13,6 +13,7 @@
 
 
 ## Amount in Word 
+```
 Public Shared Function changeToWords(ByVal numb As [String]) As [String]
     Dim val As [String] = "", wholeNo As [String] = numb, points As [String] = "", andStr As [String] = "", pointStr As [String] = ""
     Dim endStr As [String] = ""
@@ -220,7 +221,7 @@ Private Shared Function translateCents(ByVal cents As [String]) As [String]
     Next
     Return cts
 End Function
-
+```
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## RDLC report Print in Multiple Page
