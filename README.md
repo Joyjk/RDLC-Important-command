@@ -224,6 +224,7 @@ End Function
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## RDLC report Print in Multiple Page
+```
  private byte[] CombineReports(List<byte[]> pdfReports)
  {
      using (var ms = new MemoryStream())
@@ -250,7 +251,9 @@ End Function
      }
  }
 
+```
 
+```
  [Route("GetAllAppointmentPrescription")]
  [HttpGet]
  public IActionResult GetAllAppointmentPrescription(string fromDate, string toDate, string doctor_id, string branch_id)
@@ -300,7 +303,7 @@ End Function
      return response;
  }
 
-
+```
 
 
 
